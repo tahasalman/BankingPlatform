@@ -6,20 +6,26 @@
  * Outputs: N/A
  * Modifications: N/A
  */
-public class BankAccount {
+public abstract class BankAccount {
 	private double balance;
+	private int accountNum;
 	
 	/*
 	 * Name: BankAccount
 	 * Developers: Taha Salman
 	 * Purpose: This is a constructor for BankAccount class
-	 * Inputs: 
+	 * Inputs: balance as a double and account num as an int
 	 * Outputs: N/A
 	 * Side-Effects: N/A
-	 * Special Notes:
+	 * Special Notes: If a negative number for balance is entered, a bank account is created with 0 balance
 	 */
-	public BankAccount(double balance) {
-		this.balance = balance;
+	public BankAccount(double balance,int accountNum) {
+		if(balance<0)
+			this.balance=0;
+		else
+			this.balance = balance;
+		
+		this.accountNum = accountNum;
 	}
 	
 	
@@ -81,7 +87,7 @@ public class BankAccount {
 	 * Inputs: Amount to Transfer and the Bank account to transfer to
 	 * Outputs: True if transfer successful, false otherwise
 	 * Side-Effects: N/A
-	 * Special Notes: 
+	 * Special Notes: N/A
 	 */
 	public boolean transfer(double amountToTransfer, BankAccount secondAccount) {
 		boolean withdrawalSuccessful = this.withdraw(amountToTransfer);	//first withdraw the money from the bank account
@@ -96,5 +102,32 @@ public class BankAccount {
 		else
 			return false;			//otherwise false;
 	}
+	
+	
+	/*
+	 * Name: getAccountNum
+	 * Developers: Taha Salman
+	 * Purpose: This method returns account number of the bank account
+	 * Inputs: N/A
+	 * Outputs: Account Number
+	 * Side-Effects: N/A
+	 * Special Notes: N/A
+	 */
+	public int getAccountNum() {
+		return this.accountNum;
+	}
+	
+	
+	/*
+	 * Name: getType
+	 * Developers: Taha Salman
+	 * Purpose: This is an abstract method. It will be defined within the child classes 
+	 * Inputs: N/A
+	 * Outputs: The type of account
+	 * Side-Effects: N/A
+	 * Special Notes: N/A
+	 */
+	public abstract String getType();
+	
 	
 }

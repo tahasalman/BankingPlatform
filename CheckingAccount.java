@@ -8,8 +8,6 @@
  * 
  */
 public class CheckingAccount extends BankAccount {
-	private double balance;
-	
 	
 	/*
 	 * Name: Checking Account
@@ -20,8 +18,8 @@ public class CheckingAccount extends BankAccount {
 	 * Side-Effects: N/A
 	 * Special Notes: N/A
 	 */
-	public CheckingAccount(double balance) {
-		super(balance);
+	public CheckingAccount(double balance,int accountNum) {
+		super(balance,accountNum);
 	}
 	
 	
@@ -69,6 +67,20 @@ public class CheckingAccount extends BankAccount {
 	 */
 	public boolean transfer(double amountToTransfer, BankAccount secondAccount) {
 		return super.transfer(amountToTransfer, secondAccount);
+	}
+	
+	
+	/*
+	 * Name: checkings
+	 * Developers: Taha Salman
+	 * Purpose: This method displays the type of bank account 
+	 * Inputs: N/A
+	 * Outputs: The string "checkings"
+	 * Side-Effects: N/A
+	 * Special Notes: N/A
+	 */
+	public String getType() {
+		return "checkings";
 	}
 	
 }

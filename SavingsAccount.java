@@ -8,8 +8,6 @@
  * 
  */
 public class SavingsAccount extends BankAccount{
-private double balance;
-	
 	
 	/*
 	 * Name: Savings Account
@@ -20,8 +18,8 @@ private double balance;
 	 * Side-Effects: N/A
 	 * Special Notes: N/A
 	 */
-	public SavingsAccount(double balance) {
-		super(balance);
+	public SavingsAccount(double balance, int accountNum) {
+		super(balance,accountNum);
 	}
 	
 	
@@ -73,5 +71,20 @@ private double balance;
 	public boolean transfer(double amountToTransfer, BankAccount secondAccount) {
 		return super.transfer(amountToTransfer, secondAccount);
 	}
+	
+	
+	/*
+	 * Name: savings
+	 * Developers: Taha Salman
+	 * Purpose: This method displays the type of bank account 
+	 * Inputs: N/A
+	 * Outputs: The string "savings"
+	 * Side-Effects: N/A
+	 * Special Notes: N/A
+	 */
+	public String getType() {
+		return "savings";
+	}
+	
 
 }
