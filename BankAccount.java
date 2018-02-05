@@ -73,7 +73,7 @@ public abstract class BankAccount {
 	 * 		has to be 0 or more 
 	 */
 	public boolean withdraw(double amountToWithdraw) {
-		if(amountToWithdraw >= this.balance) {		//check that user has enough money to withdraw
+		if(amountToWithdraw <= this.balance) {		//check that user has enough money to withdraw
 			this.balance -= amountToWithdraw;		//subtract amount from balance in bank account
 			return true;							//return true suggesting withdrawal was successful
 		}
@@ -90,19 +90,14 @@ public abstract class BankAccount {
 	 * Special Notes: N/A
 	 */
 	public boolean transfer(double amountToTransfer, BankAccount secondAccount) {
-		boolean withdrawalSuccessful = this.withdraw(amountToTransfer);	//first withdraw the money from the bank account
-		if(!(withdrawalSuccessful)) {		//if withdrawal is unsuccessful return false
-			return false;
-		}
+		if(this.balance < amountToTransfer || amountToTransfer <0)				//if user does not have enough money in acocunt to transfer return false 
+			return false;														//also if amount to transfer is a negative value return false
 		
-		boolean transferSuccessful = secondAccount.deposit(amountToTransfer);
+		this.balance -= amountToTransfer;	//first withdraw the money from the bank account
 		
-		if(transferSuccessful)		//if the deposit to second account was successful return true
-			return true;
-		else
-			return false;			//otherwise false;
+		return secondAccount.deposit(amountToTransfer);		//then deposit money into second amount and return whether deposit was successful or not
+		
 	}
-	
 	
 	/*
 	 * Name: getAccountNum

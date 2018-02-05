@@ -8,6 +8,7 @@
  * 
  */
 public class SavingsAccount extends BankAccount{
+	private String type = "savings";
 	
 	/*
 	 * Name: Savings Account
@@ -51,25 +52,11 @@ public class SavingsAccount extends BankAccount{
 	 * Side-Effects: N/A
 	 * Special Notes: witdrawal amount has to be greater than or equal to 1000
 	 */
-	public boolean withdraw(double amountToWithdraw, double discountPercent) {
+	public boolean withdraw(double amountToWithdraw) {
 		if(amountToWithdraw<1000)				//amount has to be greater than 1000, otherwise user cannot withdraw and return false
 			return false;
 		
 		return super.withdraw(amountToWithdraw);
-	}
-	
-	
-	/*
-	 * Name: transfer
-	 * Developers: Taha Salman
-	 * Purpose: This method allows users transfer money from their savings account to another account
-	 * Inputs: amount to transfer and the bank account to transfer to
-	 * Outputs: true, if transfer successful, false otherwise
-	 * Side-Effects: N/A
-	 * Special Notes: N/A
-	 */
-	public boolean transfer(double amountToTransfer, BankAccount secondAccount) {
-		return super.transfer(amountToTransfer, secondAccount);
 	}
 	
 	
@@ -83,7 +70,7 @@ public class SavingsAccount extends BankAccount{
 	 * Special Notes: N/A
 	 */
 	public String getType() {
-		return "savings";
+		return this.type;
 	}
 	
 

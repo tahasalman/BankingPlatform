@@ -24,10 +24,10 @@ public class Bank {
 	 * Special Notes: depends on the ledger variable within this class
 	 */	
 	public static long generateUniqueId(HashMap<Long,ArrayList<BankAccount>> ledger) {
-		long id = ((long)Math.random())*1000000000L + 1;
+		long id = (long)((Math.random())*1000000000L + 1);
 		
 		while(ledger.containsKey(id)) {			//if ledger already contains this id then find another id
-			id = ((long)Math.random())*1000000000L + 1;
+			id = (long)((Math.random())*1000000000L + 1);
 		}
 		
 		return id;								//return a unique id when found
@@ -61,7 +61,7 @@ public class Bank {
 		char isCustomer = ' ';		//this char will store the response of whether user is customer or not
 		
 		//Check if user is customer 
-		while(isCustomer!='y' || isCustomer!='n') {					//Keep looping until user types valid response
+		while(isCustomer!='y' && isCustomer!='n') {					//Keep looping until user types valid response
 			System.out.println("Are you a customer? Type 'y' for yes and 'n' for no");
 			isCustomer = stringReader.next().charAt(0);
 		}
@@ -75,12 +75,20 @@ public class Bank {
 			while(tries<3 && !isValidId) {		//keep prompting user to enter id until id is correct or they run out of allowed tries (3)
 				
 				System.out.println("Please enter your Customer ID:");
-				customerId = numReader.nextLong();			//read customer Id 
-				
-				if(ledger.containsKey(customerId)) 		//check if ledger contains an account with this id
-					isValidId = true;
-				
-				tries++;
+				try {												//try catch block because nextLong() returns exception if there is an invalid input type
+					customerId = numReader.nextLong();			//read customer Id 
+					if(ledger.containsKey(customerId)) 		//check if ledger contains an account with this id
+						isValidId = true;
+				}
+				catch(Exception e) {
+					System.out.println("Please input numerical digits only!");
+					numReader.nextLine();			//to clear buffer
+					continue;
+					
+				}
+				finally {
+					tries++;
+				}
 			}
 			
 			//If id entered is valid, return customer id
@@ -106,7 +114,7 @@ public class Bank {
 	 */	
 	public static void createCustomer(HashMap ledger, HashMap customerRecords, Scanner stringReader) {
 		System.out.println("Please enter your name:");
-		String customerName = stringReader.nextLine();			//Read Customer Name
+		String customerName = stringReader.next();			//Read Customer Name
 		long customerId = generateUniqueId(ledger);				//assign customer a unique id
 		double customerDiscount = generateRandomPercentage();	//assign a random discount percentage
 		
@@ -148,7 +156,7 @@ public class Bank {
 			char accountType = ' ';
 			
 			//Keep prompting user for account type until they provide you with correct input
-			while(accountType!='c' || accountType!='s') {
+			while(accountType!='c' && accountType!='s') {
 				System.out.println("Your account has been verified! What type of account would you "
 						+ "like to create? Press 'c' for checkings and 's' for savings");
 				accountType = stringReader.next().charAt(0);
@@ -161,8 +169,15 @@ public class Bank {
 				
 				//keep prompting user to enter a valid amount of money to initially deposit
 				while(balance<0) {
-					System.out.println("How much money would you like to deposit in your new account? (Please enter a valid non negative amount");
-					balance = numReader.nextDouble();
+					System.out.println("How much money would you like to deposit in your new account? (Please enter a valid non negative amount)");
+					try {
+						balance = numReader.nextDouble();
+					}
+					catch(Exception e) {
+						System.out.println("Please enter a valid number!");
+						numReader.nextLine();			//to clear buffer
+						continue;
+					}
 				}
 				
 				accountsForCustomer = ledger.get(customerId);				//Get the list of accounts associated with this customer id
@@ -183,7 +198,14 @@ public class Bank {
 				//keep prompting user to enter a valid amount of money to initially deposit
 				while(balance<0) {
 					System.out.println("How much money would you like to deposit in your new account? (Please enter a valid non negative amount");
-					balance = numReader.nextDouble();
+					try {
+						balance = numReader.nextDouble();
+					}
+					catch(Exception e) {
+						System.out.println("Please enter a valid number!");
+						numReader.nextLine();		//to clear buffer
+					}
+
 				}
 				
 				accountsForCustomer = ledger.get(customerId);				//Get the list of accounts associated with this customer id
@@ -210,17 +232,17 @@ public class Bank {
 	 * Developers: Taha Salman
 	 * Purpose: This method displays all the accounts a user has and prompts them to select one to carry out an operation
 	 * Inputs: ArrayList of bank accounts and a scanner object
-	 * Outputs: Account number if customer has atleast one account otherwise -1
+	 * Outputs: Bank account selected otherwise returns null
 	 * Side-Effects: N/A
 	 * Special Notes: N/A
 	 */	
 	
-	public static int selectAccount(ArrayList<BankAccount> accounts, Scanner numReader) {
+	public static BankAccount selectAccount(ArrayList<BankAccount> accounts, Scanner numReader) {
 		int size = accounts.size();		//find size once rather than everytime within loop
 		
-		//If there are no accounts then just return -1
+		//If there are no accounts then just return null
 		if(size <1)
-			return -1;
+			return null;
 		
 		
 		HashMap<Integer,BankAccount> accountsMapped = new HashMap<Integer, BankAccount>();;	//initialize a hashmap to map account numbers to accounts
@@ -243,12 +265,22 @@ public class Bank {
 		
 		accountNum = -1;  //set accountNum to -1 to allow the following loop to run
 		
+		
+		
 		while(!accountsMapped.containsKey(accountNum)) {		//keep asking user to select account until user types a valid account number
 			System.out.println("Please type the account number of the account you wish to call this action on:");
-			accountNum = numReader.nextInt();
+			try{
+				accountNum = numReader.nextInt();
+			}
+			catch(Exception e) {
+				System.out.println("PLEASE ENTER A VALID ACCOUNT NUMBER!!!!");
+				numReader.nextLine();			//to clear buffer
+				continue;
+			}
 		}
 		
-		return accountNum;
+		return accountsMapped.get(accountNum);		//return the bank account associated with account id
+		
 	}
 	
 	/*
@@ -267,19 +299,13 @@ public class Bank {
 		if(customerId != -1) {			//if customer has been verified
 			ArrayList<BankAccount> accounts = ledger.get(customerId);
 			
-			int accountId = selectAccount(accounts,numReader);
+			BankAccount selectedAccount = selectAccount(accounts,numReader);
 			
-			if(accountId == -1) {			//If user does not have any bank accounts exit
+			if(selectedAccount==null) {			//If user does not have any bank accounts exit
 				System.out.println("You have no bank accounts associated with this id :( ");
 			}
-			else {
-				for(BankAccount account : accounts) {		//loop through all the accounts for the customer
-					if(account.getAccountNum()==accountId) {	//match the account number selected by user to the accounts in the list
-						System.out.println("Your balance in this account is " + account.getBalance());	//return balance for selected account
-						break;			//Break after displaying balance		
-					}
-				}
-			}	
+			else									//return balance for selected account	
+				System.out.println("Your balance in this account is " + selectedAccount.getBalance());
 		}
 		else {							//otherwise tell user to create a customer account first
 			System.out.println("You need to be a customer to view your balance. Please create your"
@@ -292,42 +318,126 @@ public class Bank {
 	 * Name: deposit
 	 * Developers: Taha Salman
 	 * Purpose: This method allows user to deposit money into their acocunt
-	 * Inputs: Ledger hashmap containing bank accounts mapped to customer ids, two scanner objects - one to read strings, 
+	 * Inputs: Ledger hashmap containing bank accounts mapped to customer ids, customer records hashmap, two scanner objects - one to read strings, 
 	 * 			other to read numbers
 	 * Outputs: N/A 
 	 * Side-Effects: N/A
 	 * Special Notes: N/A 
 	 */	
-	public static void deposit(HashMap<Long,ArrayList<BankAccount>> ledger, Scanner numReader, Scanner stringReader) {
+	public static void deposit(HashMap<Long,ArrayList<BankAccount>> ledger, HashMap<Long,Customer> customerRecords, Scanner numReader, Scanner stringReader) {
 		long customerId = verifyAccount(ledger,numReader,stringReader);
 		
 		if(customerId != -1) {			//if customer has been verified
 			ArrayList<BankAccount> accounts = ledger.get(customerId);
 			
-			int accountId = selectAccount(accounts,numReader);
+			BankAccount selectedAccount = selectAccount(accounts,numReader);
 			
-			if(accountId == -1) {			//If user does not have any bank accounts exit
+			if(selectedAccount == null) {			//If user does not have any bank accounts exit
 				System.out.println("You have no bank accounts associated with this id :( ");
 			}
 			else {
-				double amountToDeposit=-1;					//initialize amount to deposit as -1 so loop for UI can run
+				double amountToDeposit;					
 				boolean depositSuccessful=false;
+				boolean isSavings;
+				double customerDiscount=0;
 				
-				for(BankAccount account : accounts) {		//loop through all the accounts for the customer
-					if(account.getAccountNum()==accountId) {	//match the account number selected by user to the accounts in the list
-						
-						while(!depositSuccessful) {				//keep looping until deposit successful
-							System.out.println("How much money would you like to deposit?");
-							amountToDeposit = numReader.nextDouble();
-							
-							depositSuccessful = account.deposit(amountToDeposit);		//store boolean return value in depositSuccessful after calling deposit method
-						}
-						
-						System.out.println("Your money has been successfully deposited! Your new balance is: "+ account.getBalance());
-						
-						break;			//Break after depositing money	
-					}
+				if(selectedAccount.getType()=="savings") {		//determine type of account
+					isSavings = true;
+					customerDiscount = customerRecords.get(customerId).getDiscount();		//find the customers discount rate if checking
 				}
+				else
+					isSavings = false;
+				
+				
+				while(!depositSuccessful) {				//keep looping until deposit successful
+					System.out.println("How much money would you like to deposit?");
+					try{
+						amountToDeposit = numReader.nextDouble();			//take user input as double
+						
+						if(isSavings) //if its savings account cast to savings then call deposit method 
+							depositSuccessful = ((SavingsAccount)selectedAccount).deposit(amountToDeposit,customerDiscount);		//store boolean return value in depositSuccessfulafter calling deposit method	
+						else		//otherwise call deposit as it is since checkings account shares the bankaccount method
+							depositSuccessful = selectedAccount.deposit(amountToDeposit);
+						
+						
+						if(!depositSuccessful)
+							System.out.println("Deposit unsuccessful :( Please try again.");
+					}
+					catch(Exception e){		
+						System.out.println("Please enter a valid value!");
+						numReader.nextLine(); //to clear buffer
+						continue;
+					}
+					
+				}
+						
+				System.out.println("Your money has been successfully deposited! Your new balance is: "+ selectedAccount.getBalance());
+					
+				}
+		}	
+		else {							//otherwise tell user to create a customer account first
+			System.out.println("You need to be a customer to deposit money into a bank account. Please create your"
+					+ " customer account. You are being redirected to the main menu");
+		}
+	}
+	
+	
+	/*
+	 * Name: withdraw
+	 * Developers: Taha Salman
+	 * Purpose: This method allows user to withdraw money from their acocunt
+	 * Inputs: Ledger hashmap containing bank accounts mapped to customer ids, customer records hashmap, two scanner objects - one to read strings, 
+	 * 			other to read numbers
+	 * Outputs: N/A 
+	 * Side-Effects: N/A
+	 * Special Notes: N/A 
+	 */	
+	public static void withdraw(HashMap<Long,ArrayList<BankAccount>> ledger, HashMap<Long,Customer> customerRecords, Scanner numReader, Scanner stringReader) {
+		long customerId = verifyAccount(ledger,numReader,stringReader);
+		
+		if(customerId != -1) {			//if customer has been verified
+			ArrayList<BankAccount> accounts = ledger.get(customerId);
+			
+			BankAccount selectedAccount = selectAccount(accounts,numReader);
+			
+			if(selectedAccount == null) {			//If user does not have any bank accounts exit
+				System.out.println("You have no bank accounts associated with this id :( ");
+			}
+			else {
+				double amountToWithdraw=0;					
+				boolean withdrawalSucceeded = false;
+				boolean isChecking;
+				double customerDiscount = 0;
+				
+				if(selectedAccount.getType()=="checking") {
+					customerDiscount = customerRecords.get(customerId).getDiscount();
+					isChecking = true;
+				}
+				else
+					isChecking = false;
+				
+				while(!withdrawalSucceeded) {				//keep looping until withdrawal successful
+					System.out.println("How much money would you like to withdraw? Your account balance is " + selectedAccount.getBalance());
+					try{
+						amountToWithdraw = numReader.nextDouble();
+						
+						if(isChecking) {
+							withdrawalSucceeded = ((CheckingAccount)selectedAccount).withdraw(amountToWithdraw,customerDiscount);
+						}
+						else {
+							withdrawalSucceeded = selectedAccount.withdraw(amountToWithdraw);
+						}
+					}
+					catch(Exception e) {
+						System.out.println("Please enter a valid value");
+						numReader.nextLine(); //to clear buffer
+						continue;
+					}
+				}		
+				
+				System.out.println("You have successfully withdrawn " + amountToWithdraw+ " Your new balance is"
+								+ selectedAccount.getBalance());
+					
 			}	
 		}
 		else {							//otherwise tell user to create a customer account first
@@ -336,46 +446,52 @@ public class Bank {
 		}
 	}
 	
+	
 	/*
-	 * Name: withdraw
+	 * Name: transfer
 	 * Developers: Taha Salman
-	 * Purpose: This method allows user to withdraw money from their acocunt
+	 * Purpose: This method allows user to transfer money from their account to another 
 	 * Inputs: Ledger hashmap containing bank accounts mapped to customer ids, two scanner objects - one to read strings, 
 	 * 			other to read numbers
 	 * Outputs: N/A 
-	 * Side-Effects: N/A
+	 * Side-Effects: Users are allowed to transfer money from one account to the same one if they choose to do so.
 	 * Special Notes: N/A 
-	 */	
-	public static void withdraw(HashMap<Long,ArrayList<BankAccount>> ledger, Scanner numReader, Scanner stringReader) {
+	 */
+	public static void transfer(HashMap<Long,ArrayList<BankAccount>> ledger, Scanner numReader, Scanner stringReader) {
 		long customerId = verifyAccount(ledger,numReader,stringReader);
 		
 		if(customerId != -1) {			//if customer has been verified
 			ArrayList<BankAccount> accounts = ledger.get(customerId);
 			
-			int accountId = selectAccount(accounts,numReader);
+			BankAccount accountToTransferFrom = selectAccount(accounts,numReader);
 			
-			if(accountId == -1) {			//If user does not have any bank accounts exit
+			if(accountToTransferFrom == null) {			//If user does not have any bank accounts exit
 				System.out.println("You have no bank accounts associated with this id :( ");
 			}
-			else {
-				double amountToWithdraw=0;					
-				boolean withdrawalSucceeded = false;
+			else {							//user has atleast one bank account
 				
-				for(BankAccount account : accounts) {		//loop through all the accounts for the customer
-					if(account.getAccountNum()==accountId) {	//match the account number selected by user to the accounts in the list
-						
-						while(!withdrawalSucceeded) {				//keep looping until withdrawal successful
-							System.out.println("How much money would you like to withdraw? Your account balance is " + account.getBalance());
-							amountToWithdraw = numReader.nextDouble();
-							withdrawalSucceeded = account.withdraw(amountToWithdraw);
+				System.out.println("Please select the account you wish to transfer money to");
+				BankAccount accountToTransferTo = selectAccount(accounts,numReader);
+				
+				double amountToTransfer=0;					
+				boolean transferSuccessful = false;
+				
+				while(!transferSuccessful) {				//keep looping until transfer successful
+						System.out.println("How much money would you like to transfer? Your account balance is " + accountToTransferFrom.getBalance());
+						try {
+							amountToTransfer = numReader.nextDouble();
+							transferSuccessful = accountToTransferFrom.transfer(amountToTransfer,accountToTransferTo);
 						}
-						
-						System.out.println("You have successfully withdrawn " + amountToWithdraw+ " Your new balance is"
-								+ account.getBalance());
-						
-						break;			//Break after withdrawing money	
-					}
+						catch(Exception e){
+							System.out.println("Please enter a valid value");
+							numReader.nextLine();
+							continue;
+						}
 				}
+						
+				System.out.println("You have successfully transferred " + amountToTransfer+ " Your new balance in account " + 
+						accountToTransferFrom.getAccountNum() + " is " + accountToTransferFrom.getBalance() +" | You new balance in account "
+						+ accountToTransferTo.getAccountNum() + " is "	+accountToTransferTo.getBalance());
 			}	
 		}
 		else {							//otherwise tell user to create a customer account first
@@ -392,7 +508,7 @@ public class Bank {
 		
 		char option = ' '; 											//Options variable initialized. This will map to all user commands
 		Scanner stringReader = new Scanner(System.in);				//Create scanner object to take string inputs
-		Scanner numReader = new Scanner (System.in);				//Create scanner to take number inputs
+		Scanner numReader = new Scanner(System.in);				//Create scanner to take number inputs
 		
 		System.out.println("Welcome to The Bank!");
 		
@@ -421,20 +537,21 @@ public class Bank {
 					getBalance(ledger,numReader,stringReader);				//GET BALANCE
 					break;
 				case 'd':
-					deposit(ledger, numReader, stringReader); 				//DEPOSIT MONEY
+					deposit(ledger,customerRecords, numReader, stringReader); 				//DEPOSIT MONEY
 					break;
 				case 'e':
-					withdraw(ledger, numReader, stringReader); 				//WITHDRAW MONEY
+					withdraw(ledger,customerRecords, numReader, stringReader); 				//WITHDRAW MONEY
 					break;
 				case 'f':
-					//TRANSFER MONEY
+					transfer(ledger, numReader, stringReader);				//TRANSFER MONEY
 					break;
 				case 'g':
-					//QUIT
-					break;
+					continue;												//QUIT
 				default:
-					//INVALID INPUT TRY AGAIN
+					System.out.println("Invalid input. Try again!");
 			}
+			
+			System.out.println();
 		}
 	}
 }

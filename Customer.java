@@ -21,7 +21,7 @@ public class Customer {
 	 * Inputs: Takes as input name of customer, a unique id, and discount percentage
 	 * Outputs: N/A
 	 * Side-Effects: N/A
-	 * Special Notes:
+	 * Special Notes: N/A
 	 */
 	public Customer(String name, long id, double discount) throws Exception {
 		if(discount<0 || discount >100)							//check if discount is within a valid range 
@@ -32,5 +32,18 @@ public class Customer {
 		this.discountPercentage = discount;
 	}
 	
+	
+	/*
+	 * Name: getDiscount
+	 * Developers: Taha Salman
+	 * Purpose: This method returns the discount for a specific customer
+	 * Inputs: N/A
+	 * Outputs: double discount percentage
+	 * Side-Effects: N/A
+	 * Special Notes: N/A
+	 */
+	public double getDiscount() {
+		return this.discountPercentage;
+	}
 	
 }

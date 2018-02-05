@@ -8,12 +8,13 @@
  * 
  */
 public class CheckingAccount extends BankAccount {
+	private String type = "checking";
 	
 	/*
 	 * Name: Checking Account
 	 * Developers: Taha Salman
 	 * Purpose: This is a constructor for CheckingAccount class which extends BankAccount class
-	 * Inputs: Balance as a double value
+	 * Inputs: Balance as a double value and account Number
 	 * Outputs: N/A
 	 * Side-Effects: N/A
 	 * Special Notes: N/A
@@ -22,22 +23,7 @@ public class CheckingAccount extends BankAccount {
 		super(balance,accountNum);
 	}
 	
-	
-	/*
-	 * Name: deposit
-	 * Developers: Taha Salman
-	 * Purpose: This method allows user to deposit money into their account. This method simply extends the superclass one
-	 * Inputs: Amount to deposit
-	 * Outputs: True - if deposit successful, false otherwise
-	 * Side-Effects: N/A
-	 * Special Notes: Assumes superclass method is implemented correctly. This method is redundant since it is just calling the superclass method;
-	 * 				however, I have declared it here to allow flexibility to change it if needed for checking accounts.
-	 */
-	public boolean deposit(double amountToDeposit) {
-		return super.deposit(amountToDeposit);
-	}
-	
-	
+
 	/*
 	 * Name: withdraw
 	 * Developers: Taha Salman
@@ -57,20 +43,6 @@ public class CheckingAccount extends BankAccount {
 	
 	
 	/*
-	 * Name: transfer
-	 * Developers: Taha Salman
-	 * Purpose: This method allows users transfer money from their checking account to another account
-	 * Inputs: amount to transfer and the bank account to transfer to
-	 * Outputs: true, if transfer successful, false otherwise
-	 * Side-Effects: N/A
-	 * Special Notes: N/A
-	 */
-	public boolean transfer(double amountToTransfer, BankAccount secondAccount) {
-		return super.transfer(amountToTransfer, secondAccount);
-	}
-	
-	
-	/*
 	 * Name: checkings
 	 * Developers: Taha Salman
 	 * Purpose: This method displays the type of bank account 
@@ -80,7 +52,7 @@ public class CheckingAccount extends BankAccount {
 	 * Special Notes: N/A
 	 */
 	public String getType() {
-		return "checkings";
+		return this.type;
 	}
 	
 }
