@@ -73,7 +73,7 @@ public abstract class BankAccount {
 	 * 		has to be 0 or more 
 	 */
 	public boolean withdraw(double amountToWithdraw) {
-		if(amountToWithdraw >= this.balance) {		//check that user has enough money to withdraw
+		if(amountToWithdraw <= this.balance) {		//check that user has enough money to withdraw
 			this.balance -= amountToWithdraw;		//subtract amount from balance in bank account
 			return true;							//return true suggesting withdrawal was successful
 		}
